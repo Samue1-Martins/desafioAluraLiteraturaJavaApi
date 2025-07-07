@@ -1,17 +1,13 @@
 package br.com.alura.literatura.main;
 
 import br.com.alura.literatura.model.DataApiResponse;
+import br.com.alura.literatura.model.DataLiterature;
 import br.com.alura.literatura.model.Literature;
 import br.com.alura.literatura.repository.LiteratureRepository;
 import br.com.alura.literatura.service.ConverteData;
 import br.com.alura.literatura.service.RequestGutendexAPI;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -22,7 +18,7 @@ public class Main {
     private RequestGutendexAPI requestGutendexAPI =  new RequestGutendexAPI();
     private final String addres = "http://gutendex.com/books/?search=dom%20casmurro";
     private ConverteData converter = new ConverteData();
-    private List<Literature> literatureBooks = new ArrayList<>();
+    private List<DataApiResponse> literatureBooks = new ArrayList<DataApiResponse>();
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -40,15 +36,14 @@ public class Main {
     private void searchBooks(){
         DataApiResponse dataApiResponse = getDataBooks();
         Literature literature = new Literature(dataApiResponse);
-        literatureBooks.add(literature);
-        System.out.println(literature);
+        literatureBooks.add(dataApiResponse);
+        System.out.println(literatureBooks);
     }
 
     private DataApiResponse getDataBooks(){
         System.out.println("Digite o nome do livro para busca");
         var nameBook = reader.nextLine();
         var json = requestGutendexAPI.getData(addres);
-        System.out.println("Corpo Json: " );
         System.out.println("JSON recebido da API:\n" + json);
         DataApiResponse dataApiResponse = converter.getData(json, DataApiResponse.class);
         System.out.println();

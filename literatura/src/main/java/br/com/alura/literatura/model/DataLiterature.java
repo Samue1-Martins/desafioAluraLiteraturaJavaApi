@@ -9,6 +9,6 @@ import java.util.List;
 public record DataLiterature(
         String title,
         List<DataAuthors> authors,
-        List<Literature> languages,
+        List<String> languages,
         @JsonAlias("download_count") Integer downloadCount){
 }

@@ -17,7 +17,10 @@ public class Literature {
     private List<Authors> authorsList = new ArrayList();
 
 
-    private List languages;
+    @ElementCollection
+    @CollectionTable(name = "language")
+    @Column(name = "language_book")
+    private List<String> languages;
     private int downloadCount;
 
     public Literature(DataApiResponse dataApiResponse){}
