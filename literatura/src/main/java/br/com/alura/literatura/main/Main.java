@@ -1,12 +1,9 @@
 package br.com.alura.literatura.main;
 
-import br.com.alura.literatura.model.DataApiResponse;
-import br.com.alura.literatura.model.DataLiterature;
-import br.com.alura.literatura.model.Literature;
+import br.com.alura.literatura.model.*;
 import br.com.alura.literatura.repository.LiteratureRepository;
 import br.com.alura.literatura.service.ConverteData;
 import br.com.alura.literatura.service.RequestGutendexAPI;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,37 +13,57 @@ public class Main {
 
     private Scanner reader = new Scanner(System.in);
     private RequestGutendexAPI requestGutendexAPI =  new RequestGutendexAPI();
-    private final String addres = "http://gutendex.com/books/?search=dom%20casmurro";
+    private final String urlApi = "http://gutendex.com/books/?search=dom%20casmurro";
     private ConverteData converter = new ConverteData();
-    private List<DataApiResponse> literatureBooks = new ArrayList<DataApiResponse>();
-
-    private ObjectMapper mapper = new ObjectMapper();
-
-
     private LiteratureRepository literatureRepository;
+
+    private List<DataApiResponse> responseList = new ArrayList<>();
+    private List<Literature> literatureBooks = new ArrayList<>();
 
     public Main(LiteratureRepository literatureRepository) {
         this.literatureRepository = literatureRepository;
     }
 
     public void showMain() {
-        searchBooks();
+//        searchBooks();
+        getDataBooks();
     }
 
     private void searchBooks(){
-        DataApiResponse dataApiResponse = getDataBooks();
-        Literature literature = new Literature(dataApiResponse);
-        literatureBooks.add(dataApiResponse);
-        System.out.println(literatureBooks);
+        DataApiResponse dataApiResponse = getDataApi();
+        List<DataLiterature> listBooks = dataApiResponse.results();
+
+        System.out.println(listBooks);
+        for (DataLiterature dataLiterature : listBooks) {
+
+            Literature bookLiterature = new Literature(dataLiterature);
+            System.out.println(bookLiterature);
+
+            List<Authors> authorsList = new ArrayList<>();
+
+            for (DataAuthors dataAuthors : dataLiterature.authors()){
+                Authors authors = new Authors(dataAuthors);
+                authorsList.add(authors);
+            }
+
+            bookLiterature.setAuthorsList(authorsList);
+            System.out.println("Salvando livro");
+            literatureRepository.save(bookLiterature);
+        }
     }
 
-    private DataApiResponse getDataBooks(){
-        System.out.println("Digite o nome do livro para busca");
-        var nameBook = reader.nextLine();
-        var json = requestGutendexAPI.getData(addres);
+    private DataApiResponse getDataApi(){
+//        System.out.println("Digite o nome do livro para busca");
+//        var nameBook = reader.nextLine();
+        var json = requestGutendexAPI.getData(urlApi);
         System.out.println("JSON recebido da API:\n" + json);
         DataApiResponse dataApiResponse = converter.getData(json, DataApiResponse.class);
-        System.out.println();
         return dataApiResponse;
+    }
+
+    private void getDataBooks(){
+        literatureBooks = literatureRepository.findAll();
+        literatureBooks.stream()
+                .forEach(System.out::println);
     }
 }

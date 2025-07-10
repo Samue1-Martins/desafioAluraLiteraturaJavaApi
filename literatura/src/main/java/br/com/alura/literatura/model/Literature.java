@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name= "literature")
+@Table(name = "books_literature")
 public class Literature {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,14 +16,16 @@ public class Literature {
     @OneToMany(mappedBy = "literature", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Authors> authorsList = new ArrayList();
 
-
     @ElementCollection
     @CollectionTable(name = "language")
     @Column(name = "language_book")
-    private List<String> languages;
+    private List<String> languages = new ArrayList<>();
+
     private int downloadCount;
 
-    public Literature(DataApiResponse dataApiResponse){}
+//    public Literature(DataApiResponse dataApiResponse){}
+
+    public Literature(){}
 
     public Literature(DataLiterature dataLiterature) {
         this.title = dataLiterature.title();
@@ -52,14 +54,15 @@ public class Literature {
     }
 
     public void setAuthorsList(List<Authors> authorsList) {
+        authorsList.forEach(a -> a.setLiterature(this));
         this.authorsList = authorsList;
     }
 
-    public List getLanguages() {
+    public List<String> getLanguages() {
         return languages;
     }
 
-    public void setLanguages(List languages) {
+    public void setLanguages(List<String> languages) {
         this.languages = languages;
     }
 
@@ -73,11 +76,11 @@ public class Literature {
 
     @Override
     public String toString() {
-        return "Literature{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", authorsList=" + authorsList +
-                ", downloadCount=" + downloadCount +
+        return "Literature {" +
+                "id = " + id +
+                ", title = " + title + '\'' +
+                ", authorsList = " + authorsList +
+                ", downloadCount = " + downloadCount +
                 '}';
     }
 }
