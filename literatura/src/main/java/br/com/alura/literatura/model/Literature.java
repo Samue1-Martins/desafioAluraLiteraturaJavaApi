@@ -16,14 +16,12 @@ public class Literature {
     @OneToMany(mappedBy = "literature", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Authors> authorsList = new ArrayList();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "language")
     @Column(name = "language_book")
     private List<String> languages = new ArrayList<>();
 
     private int downloadCount;
-
-//    public Literature(DataApiResponse dataApiResponse){}
 
     public Literature(){}
 
@@ -81,6 +79,7 @@ public class Literature {
                 ", title = " + title + '\'' +
                 ", authorsList = " + authorsList +
                 ", downloadCount = " + downloadCount +
+                ", languages = "+ languages +
                 '}';
     }
 }

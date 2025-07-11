@@ -20,6 +20,6 @@ public class LiteratureApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		Main main = new Main(literatureRepository);
-		main.showMain();
+		main.principal();
 	}
 }
