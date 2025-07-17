@@ -74,12 +74,15 @@ public class Literature {
 
     @Override
     public String toString() {
-        return "Literature {" +
-                "id = " + id +
-                ", title = " + title + '\'' +
-                ", authorsList = " + authorsList +
-                ", downloadCount = " + downloadCount +
-                ", languages = "+ languages +
-                '}';
+        return "--------- LIVRO ---------" +
+                "\n" +
+                "Titulo: " + title + '\n' +
+                "Autor:  " + authorsList.get(0).getName() + "\n"+
+                "Idioma: "+ languages.get(0) + "\n" +
+                "Número de downloads: " + downloadCount +
+                "\n" +
+                "-------------------------" + "\n" +
+                "\n" +
+                "-------------------------" ;
     }
 }

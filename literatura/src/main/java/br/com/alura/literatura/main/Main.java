@@ -5,8 +5,6 @@ import br.com.alura.literatura.repository.LiteratureRepository;
 import br.com.alura.literatura.service.ConverteData;
 import br.com.alura.literatura.service.RequestGutendexAPI;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -26,8 +24,6 @@ public class Main {
 
     public void principal() {
 
-//        searchBooks();
-
         var option = -1;
         while (option != 0){
             showMain();
@@ -41,10 +37,11 @@ public class Main {
                 case 2:
                     getDbDataBooks();
                     break;
+                case 3:
+                    getDbDataAuthors();
+                    break;
             }
-
         }
-//        getDbDataBooks();
     }
 
     private void showMain(){
@@ -64,37 +61,64 @@ public class Main {
         System.out.println("Digite o nome do livro para busca: ");
         var nameBook = reader.nextLine();
         var json = requestGutendexAPI.getData(urlApi + nameBook.replace(" ", "%20"));
-//        System.out.println("JSON recebido da API:\n" + json);
+        System.out.println("JSON recebido da API:\n" + json);
         DataApiResponse dataApiResponse = converter.getData(json, DataApiResponse.class);
         return dataApiResponse;
     }
 
     private void searchBooks(){
         DataApiResponse dataApiResponse = getBooksDataApi();
-        List<DataLiterature> listBooks = dataApiResponse.results();
 
-        for (DataLiterature dataLiterature : listBooks) {
+        if (dataApiResponse.count() == 0) {
+            System.out.println("Livro não encontrado");
+        } else {
 
-            Literature bookLiterature = new Literature(dataLiterature);
-            System.out.println(bookLiterature);
+            try {
+                List<DataLiterature> listBooks = dataApiResponse.results();
 
-            List<Authors> authorsList = new ArrayList<>();
+                for (int i = 0; i < listBooks.size() ; i++) {
 
-            for (DataAuthors dataAuthors : dataLiterature.authors()){
-                Authors authors = new Authors(dataAuthors);
-                authorsList.add(authors);
+                    for (DataLiterature dataLiterature : listBooks) {
+
+                        Literature bookLiterature = new Literature(dataLiterature);
+
+                        List<Authors> authorsList = new ArrayList<>();
+
+                        for (DataAuthors dataAuthors : dataLiterature.authors()){
+                            Authors authors = new Authors(dataAuthors);
+                            authorsList.add(authors);
+                        }
+
+                        bookLiterature.setAuthorsList(authorsList);
+                        System.out.println(bookLiterature);
+//                    literatureRepository.save(bookLiterature);
+                    }
+                }
+            } catch (RuntimeException e) {
+                System.out.println("Não foi possivel salvar o livro, error: " + e);
+                throw new RuntimeException(e);
             }
-
-            bookLiterature.setAuthorsList(authorsList);
-//            literatureRepository.save(bookLiterature);
         }
     }
 
-
-
     private void getDbDataBooks(){
         literatureBooks = literatureRepository.findAll();
-        literatureBooks.stream()
-                .forEach(System.out::println);
+        literatureBooks.forEach(System.out::println);
+    }
+
+//    private void getDataInfoApiBook(List listBook){
+//        var bookList = listBook;
+//    }
+
+    private void getDbDataAuthors(){
+        literatureBooks = literatureRepository.findAll();
+        literatureBooks.forEach(l ->
+                System.out.println( "---------------------" + "\n"
+                        + "Nome: " + l.getAuthorsList().getFirst().getName() + "\n" +
+                        "Ano de nascimento: " + l.getAuthorsList().getFirst().getBirth_year() + "\n" +
+                        "Ano de falecimento: " + l.getAuthorsList().getFirst().getDeath_year() + "\n" +
+                        "livros: " + l.getTitle() + "\n" +
+                        "---------------------"
+                ));
     }
 }
