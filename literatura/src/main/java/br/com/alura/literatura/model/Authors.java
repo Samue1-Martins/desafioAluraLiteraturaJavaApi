@@ -38,19 +38,19 @@ public class Authors {
         this.literature = literature;
     }
 
-    public Integer getDeath_year() {
+    public Integer getDeathYear() {
         return deathYear;
     }
 
-    public void setDeath_year(Integer deathYear) {
+    public void setDeathYear(Integer deathYear) {
         this.deathYear = deathYear;
     }
 
-    public Integer getBirth_year() {
+    public Integer getBirthYear() {
         return birthYear;
     }
 
-    public void setBirth_year(Integer birthYear) {
+    public void setBirthYear(Integer birthYear) {
         this.birthYear = birthYear;
     }
 
@@ -64,11 +64,10 @@ public class Authors {
 
     @Override
     public String toString() {
-        return "Authors{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", birthYear=" + birthYear +
-                ", deathYear=" + deathYear +
+        return "--------- BUSCANDO LIVRO POR TITULO ---------" + "\n" +
+                "'" + name + '\'' +
+                ", birthYear = " + birthYear +
+                ", deathYear = " + deathYear +
                 '}';
     }
 }

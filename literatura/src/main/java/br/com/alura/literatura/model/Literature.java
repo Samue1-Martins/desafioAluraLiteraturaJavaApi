@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "books_literature")
+@Table(name = "literature")
 public class Literature {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,7 +14,7 @@ public class Literature {
     private String title;
 
     @OneToMany(mappedBy = "literature", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Authors> authorsList = new ArrayList();
+    private List<Authors> authorsList = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "language")
@@ -74,15 +74,15 @@ public class Literature {
 
     @Override
     public String toString() {
-        return "--------- LIVRO ---------" +
+        return "--------- BUSCANDO LIVRO POR TITULO ---------" +
                 "\n" +
                 "Titulo: " + title + '\n' +
-                "Autor:  " + authorsList.get(0).getName() + "\n"+
-                "Idioma: "+ languages.get(0) + "\n" +
+                "Autor:  " + authorsList.getFirst().getName() + "\n"+
+                "Idioma: "+ languages.getFirst() + "\n" +
                 "Número de downloads: " + downloadCount +
                 "\n" +
-                "-------------------------" + "\n" +
+                "--------------------------------------------" + "\n" +
                 "\n" +
-                "-------------------------" ;
+                "--------------------------------------------" ;
     }
 }

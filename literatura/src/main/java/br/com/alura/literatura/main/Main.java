@@ -40,6 +40,12 @@ public class Main {
                 case 3:
                     getDbDataAuthors();
                     break;
+                case 4:
+                    searchByYearAliveDb();
+                    break;
+                case 5:
+                    searchBookByLanguage();
+                    break;
             }
         }
     }
@@ -69,8 +75,14 @@ public class Main {
     private void searchBooks(){
         DataApiResponse dataApiResponse = getBooksDataApi();
 
+//        verifyBooksDb(dataApiResponse.results().getFirst().title());
+
         if (dataApiResponse.count() == 0) {
-            System.out.println("Livro não encontrado");
+            System.out.println("""
+                    --------------------------------
+                    Livro não encontrado
+                    --------------------------------
+                    """);
         } else {
 
             try {
@@ -91,7 +103,7 @@ public class Main {
 
                         bookLiterature.setAuthorsList(authorsList);
                         System.out.println(bookLiterature);
-//                    literatureRepository.save(bookLiterature);
+                    literatureRepository.save(bookLiterature);
                     }
                 }
             } catch (RuntimeException e) {
@@ -101,24 +113,91 @@ public class Main {
         }
     }
 
-    private void getDbDataBooks(){
-        literatureBooks = literatureRepository.findAll();
-        literatureBooks.forEach(System.out::println);
+    private void verifyBooksDb(String nameBook){
+        var book = literatureRepository.findByTitleContainingIgnoreCase(nameBook);
+        if(book.isPresent()) {
+            System.out.println("Dados livros " + book.get());
+        } else {
+            System.out.println("Livro não encontrado!");
+        }
     }
 
-//    private void getDataInfoApiBook(List listBook){
-//        var bookList = listBook;
-//    }
+    private void getDbDataBooks(){
+        literatureBooks = literatureRepository.findAll();
+        literatureBooks.forEach(l->
+                System.out.println( "--------- LIVROS REGISTRADOS ---------" + "\n" +
+                "Titulo: " + l.getTitle()+ "\n" +
+                "Autor: " + l.getAuthorsList().getFirst().getName() + "\n" +
+                "Idioma: " + l.getLanguages().getFirst() + "\n" +
+                "Número de downloads: " + l.getDownloadCount()+ "\n" +
+                "--------------------------------------"
+        ) );
+    }
 
     private void getDbDataAuthors(){
         literatureBooks = literatureRepository.findAll();
         literatureBooks.forEach(l ->
                 System.out.println( "---------------------" + "\n"
-                        + "Nome: " + l.getAuthorsList().getFirst().getName() + "\n" +
-                        "Ano de nascimento: " + l.getAuthorsList().getFirst().getBirth_year() + "\n" +
-                        "Ano de falecimento: " + l.getAuthorsList().getFirst().getDeath_year() + "\n" +
+                         + "Autores registrados" + "\n" +
+                        "---------------------" + "\n" +
+                        "Nome: " + l.getAuthorsList().getFirst().getName() + "\n" +
+                        "Ano de nascimento: " + l.getAuthorsList().getFirst().getBirthYear() + "\n" +
+                        "Ano de falecimento: " + l.getAuthorsList().getFirst().getDeathYear() + "\n" +
                         "livros: " + l.getTitle() + "\n" +
                         "---------------------"
                 ));
+    }
+
+    private void searchByYearAliveDb(){
+
+        System.out.println("Adicione o ano para buscar autores vivos em determinado ano");
+
+        var searchYear = reader.nextInt();
+
+        reader.nextLine();
+
+        List<Literature> authorAlive = literatureRepository.findByBirthYearAndDeathYear(searchYear);
+
+        if(authorAlive.isEmpty()) {
+            System.out.println("Não há autores vivos nestes determinados anos!");
+        } else {
+            authorAlive.forEach(a ->
+                    System.out.println("---------------------" + "\n"
+                            + "Autores registrados" + "\n" +
+                            "---------------------" + "\n" +
+                            "Nome: " + a.getTitle() + "\n" +
+                            "Ano de nascimento: " + a.getAuthorsList().getFirst().getBirthYear() + "\n" +
+                            "Ano de falecimento: " + a.getAuthorsList().getFirst().getDeathYear() + "\n" +
+                            "livros: " + a.getTitle() + "\n" +
+                            "---------------------"));
+        }
+    }
+
+    private void searchBookByLanguage(){
+
+        System.out.println("""
+                Insira o idioma para realizar a busca:
+                es - espanhol
+                en - inglês
+                fr - francês
+                pt - português
+                """);
+
+        var searchBooksByLanguage = reader.nextLine();
+
+        List<Literature> findBookByLanguage = literatureRepository.findByBookLanguage(searchBooksByLanguage);
+
+        if(findBookByLanguage.isEmpty()) {
+            System.out.println("Não há livros neste idioma!");
+        } else {
+            findBookByLanguage.forEach(l -> System.out.println( "--------------------------" + "\n"
+                + "Listando livros por Idioma" + "\n" +
+                "--------------------------" + "\n" +
+                "Titulo: " + l.getTitle()+ "\n" +
+                "Autor: " + l.getAuthorsList().getFirst().getName() + "\n" +
+                "Idioma: " + l.getLanguages().getFirst() + "\n" +
+                "Número de downloads: " + l.getDownloadCount()+ "\n" +
+                "--------------------------"));
+        }
     }
 }
