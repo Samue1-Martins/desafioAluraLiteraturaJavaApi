@@ -15,7 +15,7 @@
   - Busca de autores: lista autores registrados no banco de dados e busca autores vivos em determinado ano. <br><br>
   - Listagem de livros: funcionalidade que mostra livros registrados no banco de dados.<br><br>
   
-## Link do repositório
+## Link clone do repositório
 
 Link (https://github.com/Samue1-Martins/desafioAluraLiteraturaJavaApi.git) <br>
 
