@@ -1,4 +1,4 @@
-# CONSUMO API GUTENDEX
+# CONSUMO API GUTENDEX COM JAVA
 
   Um projeto criado para o desafio Alura que faz consumo da API Gutendex e persistência no banco de dados
   
